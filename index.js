@@ -3,12 +3,17 @@ import {Server} from 'socket.io';
 import { PrismaClient } from "@prisma/client";
 
 
+
 const prismaclient = new PrismaClient();
 const server=createServer();//node server
 const io=new Server(server,{
-    cors:{
-        origin:process.env.NEXT_PUBLIC_URL,
-    }
+   cors: {
+  origin: [
+    "http://localhost:3000",
+    "https://snapchat-vert.vercel.app"
+  ],
+  credentials: true,
+}
 })
 const onlineusers={};
 function isSameDay(d1, d2) {
@@ -187,6 +192,14 @@ io.on("connection",(socket)=>{
     })
     
 })
-server.listen(process.env.NEXT_PUBLIC_SOCKET_URL, () => {
-  console.log("Socket server running on port 4000");
+const PORT = process.env.PORT || 4000;
+
+server.listen(PORT, () => {
+  console.log(`🚀 Socket server running on port ${PORT}`);
+});
+
+process.on("SIGTERM", async () => {
+  console.log("🔴 Shutting down...");
+  await prismaclient.$disconnect();
+  process.exit(0);
 });
