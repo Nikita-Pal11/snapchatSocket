@@ -187,6 +187,7 @@ io.on("connection",(socket)=>{
       resp: {
         ...resp,
         sender, 
+        isopened:resp.isopened??false
       },
     })
     io.to(recsocketid).emit("rec_notification", {
