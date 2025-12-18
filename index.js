@@ -3,6 +3,8 @@ import {Server} from 'socket.io';
 import { PrismaClient } from "@prisma/client";
 
 
+import dotenv from "dotenv";
+dotenv.config();
 
 const prismaclient = new PrismaClient();
 const server=createServer();//node server
@@ -173,13 +175,20 @@ io.on("connection",(socket)=>{
     where: { id: msg.senderid },
     select: {
       id: true,
+      clerkId:true,
       name: true,
       avatar: true,
     },
   });
           if (!recsocketid || !sender) return;
        if (recsocketid && resp) {
-        io.to(recsocketid).emit("new_notification",resp)
+        
+        io.to(recsocketid).emit("new_notification",{
+      resp: {
+        ...resp,
+        sender, 
+      },
+    })
     io.to(recsocketid).emit("rec_notification", {
       resp: {
         ...resp,
